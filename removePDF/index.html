@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>批量PDF页面处理工具</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Microsoft Yahei", sans-serif;
+        }
+        body {
+            background-color: #f5f7fa;
+            padding: 40px 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 24px;
+        }
+        .mode-select {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .mode-select label {
+            margin-right: 20px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .upload-area:hover {
+            border-color: #409eff;
+            background: #f0f7ff;
+        }
+        .upload-area.active {
+            border-color: #67c23a;
+            background: #f0f9eb;
+        }
+        .upload-area p {
+            color: #666;
+            margin-top: 10px;
+        }
+        #file-input {
+            display: none;
+        }
+        .file-list {
+            margin-bottom: 20px;
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 10px;
+        }
+        .file-item {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .file-item:last-child {
+            border-bottom: none;
+        }
+        .file-name {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-right: 10px;
+        }
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #409eff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .btn:hover:not(:disabled) {
+            background: #337ecc;
+        }
+        .progress {
+            margin-top: 20px;
+            height: 8px;
+            background: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+            display: none;
+        }
+        .progress-bar {
+            height: 100%;
+            background: #67c23a;
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .tip {
+            margin-top: 15px;
+            color: #999;
+            font-size: 14px;
+            text-align: center;
+        }
+        .error {
+            color: #f56c6c;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>批量PDF页面处理工具</h1>
+        
+        <!-- 模式选择 -->
+        <div class="mode-select">
+            <label>
+                <input type="radio" name="mode" value="remove-second" checked> 删除第二页
+            </label>
+            <label>
+                <input type="radio" name="mode" value="keep-first"> 仅保留第一页
+            </label>
+        </div>
+
+        <!-- 上传区域 -->
+        <div class="upload-area" id="upload-area">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#ccc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="17 8 12 3 7 8"></polyline>
+                <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+            <p>点击或拖拽PDF文件到此处上传</p>
+            <input type="file" id="file-input" accept=".pdf" multiple>
+        </div>
+
+        <!-- 文件列表 -->
+        <div class="file-list" id="file-list"></div>
+
+        <!-- 处理按钮 -->
+        <button class="btn" id="process-btn" disabled>开始处理</button>
+
+        <!-- 进度条 -->
+        <div class="progress" id="progress">
+            <div class="progress-bar" id="progress-bar"></div>
+        </div>
+
+        <!-- 提示信息 -->
+        <div class="error" id="error"></div>
+        <div class="tip">
+            提示：所有PDF处理均在本地完成，文件不会上传至服务器，可放心使用
+        </div>
+    </div>
+
+    <!-- 替换为国内CDN的PDF-lib（jsDelivr国内节点，兼容GitHub Pages） -->
+     <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+    <script>
+        // 全局变量
+        const uploadArea = document.getElementById('upload-area');
+        const fileInput = document.getElementById('file-input');
+        const fileList = document.getElementById('file-list');
+        const processBtn = document.getElementById('process-btn');
+        const progress = document.getElementById('progress');
+        const progressBar = document.getElementById('progress-bar');
+        const errorEl = document.getElementById('error');
+        let selectedFiles = [];
+
+        // 初始化
+        init();
+
+        function init() {
+            // 上传区域点击触发文件选择
+            uploadArea.addEventListener('click', () => fileInput.click());
+            
+            // 拖拽上传
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('active');
+            });
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('active');
+            });
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('active');
+                if (e.dataTransfer.files.length) {
+                    handleFiles(e.dataTransfer.files);
+                }
+            });
+
+            // 文件选择变化
+            fileInput.addEventListener('change', () => {
+                handleFiles(fileInput.files);
+            });
+
+            // 处理按钮点击
+            processBtn.addEventListener('click', processFiles);
+        }
+
+        // 处理文件选择
+        function handleFiles(files) {
+            errorEl.textContent = '';
+            // 过滤仅保留PDF文件
+            selectedFiles = Array.from(files).filter(file => {
+                const isPdf = file.type === 'application/pdf' || file.name.endsWith('.pdf');
+                if (!isPdf) {
+                    errorEl.textContent = `跳过非PDF文件：${file.name}`;
+                }
+                return isPdf;
+            });
+            
+            // 清空文件列表
+            fileList.innerHTML = '';
+            
+            if (selectedFiles.length === 0) {
+                processBtn.disabled = true;
+                return;
+            }
+
+            // 渲染文件列表
+            selectedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.innerHTML = `
+                    <span class="file-name">${file.name}</span>
+                    <span>${(file.size / 1024 / 1024).toFixed(2)} MB</span>
+                `;
+                fileList.appendChild(fileItem);
+            });
+
+            processBtn.disabled = false;
+        }
+
+        // 批量处理文件
+        // 新增全局ZIP变量
+        let zip = new JSZip();
+
+        // 批量处理文件（ZIP打包版）
+        async function processFiles() {
+            const mode = document.querySelector('input[name="mode"]:checked').value;
+            const totalFiles = selectedFiles.length;
+            let processedFiles = 0;
+
+            // 重置进度条+清空ZIP
+            progress.style.display = 'block';
+            progressBar.style.width = '0%';
+            processBtn.disabled = true;
+            errorEl.textContent = '';
+            zip = new JSZip(); // 重置ZIP实例
+
+            try {
+                for (const file of selectedFiles) {
+                    // 处理文件并添加到ZIP，不立即下载
+                    await handleSingleFileToZip(file, mode);
+                    processedFiles++;
+                    progressBar.style.width = `${(processedFiles / totalFiles) * 100}%`;
+                }
+
+                // 生成ZIP并下载
+                progressBar.style.width = '100%';
+                const zipContent = await zip.generateAsync({
+                    type: 'blob',
+                    compression: 'DEFLATE', // 开启压缩，减小ZIP体积
+                    compressionOptions: { level: 6 }
+                });
+                // 下载ZIP文件
+                saveAs(zipContent, `PDF处理结果_${new Date().getTime()}.zip`);
+
+                // 处理完成提示
+                setTimeout(() => {
+                    progress.style.display = 'none';
+                    alert(`处理完成！共处理 ${totalFiles} 个PDF文件（已打包为ZIP下载）`);
+                    // 清空选择
+                    selectedFiles = [];
+                    fileList.innerHTML = '';
+                    fileInput.value = '';
+                }, 500);
+            } catch (err) {
+                errorEl.textContent = `处理失败：${err.message}（建议检查文件是否损坏/加密）`;
+                progress.style.display = 'none';
+                processBtn.disabled = false;
+                console.error(err);
+            }
+        }
+
+        // 处理单个PDF文件
+        // 处理单个PDF并添加到ZIP（替换原handleSingleFile）
+        async function handleSingleFileToZip(file, mode) {
+            try {
+                const pdfDoc = await PDFLib.PDFDocument.create();
+                const originalPdfBytes = await readFileAsArrayBuffer(file);
+                const originalPdf = await PDFLib.PDFDocument.load(originalPdfBytes);
+                const pageCount = originalPdf.getPageCount();
+
+                // 根据模式处理页面
+                if (mode === 'remove-second') {
+                    for (let i = 0; i < pageCount; i++) {
+                        if (i !== 1) { 
+                            const [page] = await pdfDoc.copyPages(originalPdf, [i]);
+                            pdfDoc.addPage(page);
+                        }
+                    }
+                } else if (mode === 'keep-first') {
+                    if (pageCount >= 1) {
+                        const [page] = await pdfDoc.copyPages(originalPdf, [0]);
+                        pdfDoc.addPage(page);
+                    }
+                }
+
+                // 生成PDF字节并添加到ZIP
+                const pdfBytes = await pdfDoc.save();
+                const fileName = `处理后_${file.name}`;
+                zip.file(fileName, pdfBytes); // 加入ZIP，不单独下载
+            } catch (err) {
+                throw new Error(`文件 ${file.name} 处理失败：${err.message}`);
+            }
+        }
+
+        // 辅助函数：读取文件为ArrayBuffer
+        function readFileAsArrayBuffer(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error(`读取文件 ${file.name} 失败`));
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+
+    </script>
+</body>
+</html>

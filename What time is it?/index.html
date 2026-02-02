@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>各国时间查询 - 点击跳转百度</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "微软雅黑", "宋体", sans-serif;
+        }
+        body {
+            background-color: #f8f9fa;
+            padding: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        /* 搜索框样式 */
+        .search-box {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        #searchInput {
+            width: 60%;
+            padding: 12px 20px;
+            font-size: 18px;
+            border: 2px solid #409eff;
+            border-radius: 8px 0 0 8px;
+            outline: none;
+        }
+        #searchBtn {
+            padding: 12px 30px;
+            font-size: 18px;
+            background-color: #409eff;
+            color: white;
+            border: none;
+            border-radius: 0 8px 8px 0;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        #searchBtn:hover {
+            background-color: #337ecc;
+        }
+        .search-result {
+            margin-top: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            min-height: 40px;
+        }
+        /* 首字母导航栏 */
+        .initial-nav {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .initial-nav a {
+            display: inline-block;
+            padding: 6px 12px;
+            margin: 0 5px;
+            font-size: 16px;
+            color: #409eff;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .initial-nav a:hover {
+            background-color: #409eff;
+            color: white;
+        }
+        /* 国家分组样式 */
+        .country-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+        .country-group {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            min-width: 120px;
+            text-align: center;
+        }
+        .group-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #409eff;
+        }
+        .country-btn {
+            display: block;
+            width: 100%;
+            padding: 10px 0;
+            margin: 8px 0;
+            font-size: 16px;
+            color: #333;
+            background-color: #f1f3f5;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        .country-btn:hover {
+            background-color: #409eff;
+            color: white;
+            transform: translateY(-2px);
+        }
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            #searchInput {
+                width: 70%;
+            }
+            .country-group {
+                min-width: 100px;
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部搜索框：拼音首字母/全称搜索 -->
+    <div class="search-box">
+        <input type="text" id="searchInput" placeholder="拼音首字母/全称搜索（如mg=美国、mxg=墨西哥）">
+        <button id="searchBtn">搜索</button>
+        <div class="search-result" id="searchResult"></div>
+    </div>
+
+    <!-- 首字母导航栏：点击快速定位 -->
+    <div class="initial-nav" id="initialNav"></div>
+
+    <!-- 国家分组展示区 -->
+    <div class="country-container" id="countryContainer"></div>
+
+    <script>
+        // #################### 核心配置数组 ####################
+        // 格式：{name: '显示名称', pinyin: '全拼', initial: '拼音首字母', initials: '拼音首字母缩写'}
+        const countryList = [
+            { name: '澳大利亚', pinyin: 'aodaliya', initial: 'A', initials: 'adly' },
+            { name: '巴西', pinyin: 'baxi', initial: 'B', initials: 'bx' },
+            { name: '波兰', pinyin: 'bolan', initial: 'B', initials: 'bl' },
+            { name: '德国', pinyin: 'deguo', initial: 'D', initials: 'dg' },
+            { name: '韩国', pinyin: 'hanguo', initial: 'H', initials: 'hg' },
+            { name: '加拿大', pinyin: 'jianada', initial: 'J', initials: 'jnd' },
+            { name: '墨西哥', pinyin: 'moxige', initial: 'M', initials: 'mxg' },
+            { name: '美国', pinyin: 'meiguo', initial: 'M', initials: 'mg' },
+            { name: '日本', pinyin: 'riben', initial: 'R', initials: 'rb' },
+            { name: '匈牙利', pinyin: 'xiongyali', initial: 'X', initials: 'xyl' },
+            { name: '西班牙', pinyin: 'xibanya', initial: 'X', initials: 'xby' },
+            { name: '英国', pinyin: 'yingguo', initial: 'Y', initials: 'yg' },
+            { name: '中东', pinyin: 'zhongdong', initial: 'Z', initials: 'zd' }
+        ];
+
+        // #################### 页面初始化 ####################
+        window.onload = function() {
+            renderInitialNav(); // 渲染首字母导航栏
+            renderCountryGroups(); // 渲染国家分组
+            bindSearchEvent(); // 绑定搜索事件
+        };
+
+        // 渲染首字母导航栏（自动提取不重复的首字母）
+        function renderInitialNav() {
+            const initials = [...new Set(countryList.map(item => item.initial))].sort();
+            const navDom = document.getElementById('initialNav');
+            initials.forEach(initial => {
+                const a = document.createElement('a');
+                a.href = `#${initial}`;
+                a.innerText = initial;
+                navDom.appendChild(a);
+            });
+        }
+
+        // 渲染国家分组（按首字母分组，带锚点）
+        function renderCountryGroups() {
+            const container = document.getElementById('countryContainer');
+            // 按首字母分组
+            const groupMap = countryList.reduce((map, item) => {
+                if (!map[item.initial]) map[item.initial] = [];
+                map[item.initial].push(item);
+                return map;
+            }, {});
+            // 遍历分组渲染
+            Object.keys(groupMap).sort().forEach(initial => {
+                const group = document.createElement('div');
+                group.className = 'country-group';
+                group.id = initial; // 锚点ID，对应首字母导航
+                // 分组标题
+                const title = document.createElement('div');
+                title.className = 'group-title';
+                title.innerText = initial;
+                group.appendChild(title);
+                // 国家按钮
+                groupMap[initial].forEach(country => {
+                    const btn = createCountryBtn(country.name);
+                    group.appendChild(btn);
+                });
+                container.appendChild(group);
+            });
+        }
+
+        // 绑定搜索事件（点击搜索/按回车键）
+        function bindSearchEvent() {
+            const input = document.getElementById('searchInput');
+            const btn = document.getElementById('searchBtn');
+            // 点击搜索
+            btn.onclick = () => doSearch(input.value.trim());
+            // 按回车键搜索
+            input.onkeydown = (e) => {
+                if (e.key === 'Enter') doSearch(input.value.trim());
+            };
+        }
+
+        // 执行搜索：匹配拼音首字母缩写/完整拼音首字母/完整拼音/名称
+        function doSearch(keyword) {
+            const resultDom = document.getElementById('searchResult');
+            resultDom.innerHTML = '';
+            if (!keyword) return;
+            const lowerKey = keyword.toLowerCase();
+            
+            // 筛选匹配的国家
+            const matchList = countryList.filter(item => {
+                // 1. 匹配拼音首字母缩写（如"mg"匹配"美国"）
+                if (item.initials && item.initials.startsWith(lowerKey)) {
+                    return true;
+                }
+                // 2. 匹配完整拼音首字母（如"m"匹配"美国"、"墨西哥"）
+                if (item.initial.toLowerCase() === lowerKey) {
+                    return true;
+                }
+                // 3. 匹配完整拼音（如"meiguo"匹配"美国"）
+                if (item.pinyin.startsWith(lowerKey)) {
+                    return true;
+                }
+                // 4. 匹配国家名称（如"美国"匹配"美国"）
+                if (item.name.includes(keyword)) {
+                    return true;
+                }
+                return false;
+            });
+            
+            // 渲染搜索结果
+            if (matchList.length === 0) {
+                resultDom.innerText = '无匹配结果，请重新输入！';
+                return;
+            }
+            matchList.forEach(item => {
+                const btn = createCountryBtn(item.name);
+                resultDom.appendChild(btn);
+            });
+        }
+
+        // 生成国家按钮：点击跳转百度「XX现在几点」
+        function createCountryBtn(name) {
+            const a = document.createElement('a');
+            a.className = 'country-btn';
+            // 百度搜索链接拼接
+            a.href = `https://www.baidu.com/s?wd=${encodeURIComponent(name)}现在几点`;
+            a.target = '_blank'; // 新标签页打开，保留当前快捷页
+            a.innerText = name;
+            return a;
+        }
+    </script>
+</body>
+</html>

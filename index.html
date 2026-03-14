@@ -5,188 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>我的第一个网站 - 新增按钮</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-        
         body {
-            background: linear-gradient(135deg, #1a2a6c, #b21f1f, #fdbb2d);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            color: white;
-            text-align: center;
+          background: #f7f8fa;
         }
-        
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-        
         .container {
-            max-width: 800px;
-            width: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+          max-width: 600px;
+          background: rgba(255,255,255,0.8);
+          padding: 32px;
+          box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+          border-radius: 10px;
+          margin-top: 80px;
         }
-        
         h1 {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-            background: linear-gradient(to right, #ff8a00, #da1b60);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            animation: shine 3s infinite;
+          font-size: 2.1rem;
+          color: #333;
+          margin-bottom: 18px;
         }
-        
-        @keyframes shine {
-            0% { background-position: -200%; }
-            100% { background-position: 200%; }
-        }
-        
-        p {
-            font-size: 1.4rem;
-            margin-bottom: 40px;
-            line-height: 1.6;
-        }
-        
-        .button-container {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 30px;
-            margin: 40px 0;
-        }
-        
         .jump-button {
-            display: inline-block;
-            padding: 18px 45px;
-            background: linear-gradient(45deg, #ff416c, #ff4b2b);
-            color: white;
-            text-decoration: none;
-            font-size: 1.5rem;
-            font-weight: bold;
-            border-radius: 50px;
-            border: none;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-            min-width: 300px;
-            text-align: center;
+          background: #2979ff;
+          border: none;
+          border-radius: 8px;
+          color: #fff;
+          margin: 10px 0;
+          padding: 0.8em 2em;
+          font-size: 1.12em;
+          transition: background 0.2s, transform 0.14s;
+          box-shadow: 0 1.5px 6px rgba(41,121,255,0.1);
         }
-        
         .jump-button:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
-            background: linear-gradient(45deg, #ff4b2b, #ff416c);
+          background: #1565c0;
+          transform: translateY(-2px) scale(1.03);
         }
-        
-        .jump-button:active {
-            transform: translateY(0) scale(0.98);
-        }
-        
-        .jump-button::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.1);
-            z-index: -1;
-            transform: scaleX(0);
-            transform-origin: right;
-            transition: transform 0.5s ease;
-        }
-        
-        .jump-button:hover::after {
-            transform: scaleX(1);
-            transform-origin: left;
-        }
-        
-        .jump-button i {
-            margin-left: 10px;
-            transition: transform 0.3s ease;
-        }
-        
-        .jump-button:hover i {
-            transform: translateX(5px);
-        }
-        
-        .explanation {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 25px;
-            border-radius: 15px;
-            margin-top: 40px;
-            text-align: left;
-        }
-        
-        .explanation h2 {
-            margin-bottom: 15px;
-            color: #ffcc00;
-        }
-        
-        .explanation ul {
-            padding-left: 20px;
-        }
-        
-        .explanation li {
-            margin-bottom: 10px;
-            line-height: 1.5;
-        }
-        
-        .explanation code {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: monospace;
-        }
-        
-        @media (max-width: 600px) {
-            .container {
-                padding: 25px;
-            }
-            
-            h1 {
-                font-size: 2.5rem;
-            }
-            
-            p {
-                font-size: 1.2rem;
-            }
-            
-            .jump-button {
-                font-size: 1.3rem;
-                padding: 15px 35px;
-                min-width: 250px;
-            }
-        }
-        
-        .firework {
-            position: absolute;
-            width: 5px;
-            height: 5px;
-            border-radius: 50%;
-            pointer-events: none;
-            opacity: 0;
+        .secondary {
+          background: #e0e0e0;
+          color: #333;
         }
     </style>
 </head>

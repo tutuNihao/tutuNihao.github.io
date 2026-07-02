@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>如何搭建自己的博客 - 完整指南</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=ZCOOL+XiaoWei&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface-light: #1a1a28;
+    --text: #e8e6e3;
+    --text-muted: #888880;
+    --accent: #d4a853;
+    --accent-dim: #8b7355;
+    --border: #2a2a35;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Noto Serif SC', Georgia, serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.85;
+    overflow-x: hidden;
+  }
+  /* Hero Section */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    padding: 2rem;
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(212,168,83,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, rgba(139,115,85,0.06) 0%, transparent 50%),
+      var(--bg);
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(212,168,83,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(212,168,83,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: 0.85rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    color: var(--accent-dim);
+    border: 1px solid var(--border);
+    padding: 0.5rem 1.5rem;
+    margin-bottom: 2rem;
+    opacity: 0;
+    animation: fadeUp 1s 0.3s forwards;
+  }
+  .hero h1 {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 1s 0.6s forwards;
+  }
+  .hero h1 span {
+    color: var(--accent);
+    font-style: italic;
+  }
+  .hero-subtitle {
+    font-size: 1.15rem;
+    color: var(--text-muted);
+    max-width: 560px;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 1s 0.9s forwards;
+  }
+  .scroll-hint {
+    position: absolute;
+    bottom: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    letter-spacing: 0.15em;
+    opacity: 0;
+    animation: fadeUp 1s 1.5s forwards;
+  }
+  .scroll-line {
+    width: 1px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--accent-dim), transparent);
+    animation: scrollPulse 2s infinite;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes scrollPulse {
+    0%, 100% { opacity: 0.3; transform: scaleY(0.5); }
+    50% { opacity: 1; transform: scaleY(1); }
+  }
+
+  /* Section Common */
+  .section {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 6rem 2rem;
+  }
+  .section-title {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: clamp(1.8rem, 4vw, 2.8rem);
+    margin-bottom: 1rem;
+    position: relative;
+    display: inline-block;
+  }
+  .section-title::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: var(--accent);
+  }
+  .section-desc {
+    color: var(--text-muted);
+    font-size: 1.05rem;
+    margin-bottom: 3rem;
+    max-width: 600px;
+  }
+
+  /* Method Cards */
+  .methods-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+  .method-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    cursor: default;
+  }
+  .method-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent), transparent);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+  .method-card:hover::before {
+    transform: scaleX(1);
+  }
+  .method-card:hover {
+    border-color: var(--accent-dim);
+    transform: translateY(-4px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+  }
+  .method-num {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: 3rem;
+    color: var(--accent);
+    opacity: 0.2;
+    line-height: 1;
+    margin-bottom: 0.5rem;
+  }
+  .method-card h3 {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+    color: var(--text);
+  }
+  .method-card p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+    line-height: 1.7;
+  }
+  .method-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.2rem;
+  }
+  .method-tag {
+    font-size: 0.75rem;
+    padding: 0.25rem 0.75rem;
+    background: var(--surface-light);
+    border: 1px solid var(--border);
+    color: var(--accent-dim);
+    letter-spacing: 0.05em;
+  }
+
+  /* Step Timeline */
+  .timeline {
+    position: relative;
+    padding-left: 2.5rem;
+  }
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--accent), var(--border));
+  }
+  .timeline-item {
+    position: relative;
+    padding-bottom: 3rem;
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: slideIn 0.6s forwards;
+  }
+  .timeline-item:nth-child(1) { animation-delay: 0.1s; }
+  .timeline-item:nth-child(2) { animation-delay: 0.2s; }
+  .timeline-item:nth-child(3) { animation-delay: 0.3s; }
+  .timeline-item:nth-child(4) { animation-delay: 0.4s; }
+  .timeline-item:nth-child(5) { animation-delay: 0.5s; }
+  @keyframes slideIn {
+    to { opacity: 1; transform: translateX(0); }
+  }
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -2.5rem;
+    top: 0.5rem;
+    width: 9px;
+    height: 9px;
+    background: var(--bg);
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    transform: translateX(-4px);
+  }
+  .timeline-item h4 {
+    font-family: 'ZCOOL XiaoWei', serif;
+    font-size: 1.2rem;
+    color: var(--accent);
+    margin-bottom: 0.5rem;
+  }
+  .timeline-item p {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+  .code-block {
+    background: var(--surface-light);
+    border: 1px solid var(--border);
+    padding: 1rem 1.25rem;
+    margin-top: 0.75rem;
+    font-family: 'Consolas', 'Monaco', monospace;
+    font-size: 0.85rem;
+    color: #c9c7c2;
+    overflow-x: auto;
+    border-left: 2px solid var(--accent);
+  }
+
+  /* Tech Stack Table */
+  .tech-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 2rem;
+  }
+  .tech-table th,
+  .tech-table td {
+    padding: 1rem 1.25rem;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  .tech-table th {
+    font-family: 'ZCOOL XiaoWei', serif;
+    color: var(--accent);
+    font-weight: 400;
+    letter-spacing: 0.05em;
+    background: var(--surface);
+  }
+  .tech-table td {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+  }
+  .tech-table tr:hover td {
+    color: var(--text);
+    background: rgba(212,168,83,0.03);
+  }
+
+  /* Footer */
+  .footer {
+    text-align: center;
+    padding: 4rem 2rem;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.9rem;
+  }
+  .footer a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.3s;
+  }
+  .footer a:hover {
+    border-bottom-color: var(--accent);
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .section { padding: 4rem 1.5rem; }
+    .timeline { padding-left: 1.75rem; }
+    .timeline-item::before { left: -1.75rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge">Build Your Blog</div>
+  <h1>打造属于你的<br><span>个人博客</span></h1>
+  <p class="hero-subtitle">从零开始，选择最适合你的技术路线，构建一个独一无二的在线写作空间</p>
+  <div class="scroll-hint">
+    <span>向下滚动</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- 方案选择 -->
+<section class="section">
+  <h2 class="section-title">四种主流方案</h2>
+  <p class="section-desc">根据你的技术背景和需求，选择最适合的博客搭建方式</p>
+  <div class="methods-grid">
+    <div class="method-card">
+      <div class="method-num">01</div>
+      <h3>静态网站生成器</h3>
+      <p>使用 Hugo、Hexo、Jekyll 等工具，将 Markdown 文件生成为静态 HTML。速度快、成本低、部署简单。</p>
+      <div class="method-tags">
+        <span class="method-tag">Hugo</span>
+        <span class="method-tag">Hexo</span>
+        <span class="method-tag">Jekyll</span>
+        <span class="method-tag">Astro</span>
+      </div>
+    </div>
+    <div class="method-card">
+      <div class="method-num">02</div>
+      <h3>现代前端框架</h3>
+      <p>基于 React、Vue 或 Next.js 构建，拥有极高的自由度和交互能力，适合想深度定制的开发者。</p>
+      <div class="method-tags">
+        <span class="method-tag">Next.js</span>
+        <span class="method-tag">Nuxt</span>
+        <span class="method-tag">Astro</span>
+        <span class="method-tag">Remix</span>
+      </div>
+    </div>
+    <div class="method-card">
+      <div class="method-num">03</div>
+      <h3>无头 CMS 方案</h3>
+      <p>前端使用现代框架，内容管理通过 Strapi、Sanity、Contentful 等 headless CMS 处理，前后端分离。</p>
+      <div class="method-tags">
+        <span class="method-tag">Strapi</span>
+        <span class="method-tag">Sanity</span>
+        <span class="method-tag">Contentful</span>
+        <span class="method-tag">Ghost</span>
+      </div>
+    </div>
+    <div class="method-card">
+      <div class="method-num">04</div>
+      <h3>托管平台</h3>
+      <p>最简单快速的方式，直接使用 Medium、Notion、知乎专栏或 GitHub Pages 等平台，零配置即可开始写作。</p>
+      <div class="method-tags">
+        <span class="method-tag">GitHub Pages</span>
+        <span class="method-tag">Vercel</span>
+        <span class="method-tag">Netlify</span>
+        <span class="method-tag">Notion</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 快速开始 -->
+<section class="section">
+  <h2 class="section-title">快速开始：Hugo + GitHub Pages</h2>
+  <p class="section-desc">推荐新手选择 Hugo（极速构建）配合 GitHub Pages（免费托管），十分钟即可上线</p>
+  <div class="timeline">
+    <div class="timeline-item">
+      <h4>安装 Hugo</h4>
+      <p>根据你的操作系统安装 Hugo 命令行工具</p>
+      <div class="code-block"># macOS<br>brew install hugo<br><br># Windows<br>winget install Hugo.Hugo.Extended</div>
+    </div>
+    <div class="timeline-item">
+      <h4>创建新站点</h4>
+      <p>使用 Hugo 命令初始化博客项目</p>
+      <div class="code-block">hugo new site my-blog<br>cd my-blog<br>git init</div>
+    </div>
+    <div class="timeline-item">
+      <h4>添加主题</h4>
+      <p>从 Hugo 官方主题库选择一个喜欢的主题，以子模块方式添加</p>
+      <div class="code-block">git submodule add https://github.com/theNewDynamic/gohugo-theme-ananke.git themes/ananke<br>echo "theme = 'ananke'" >> hugo.toml</div>
+    </div>
+    <div class="timeline-item">
+      <h4>创建内容</h4>
+      <p>使用 Markdown 格式撰写你的第一篇文章</p>
+      <div class="code-block">hugo new content posts/hello.md<br># 编辑 content/posts/hello.md 添加内容</div>
+    </div>
+    <div class="timeline-item">
+      <h4>部署到 GitHub Pages</h4>
+      <p>使用 GitHub Actions 自动构建和部署</p>
+      <div class="code-block"># 推送到 GitHub 后，在仓库 Settings > Pages 中配置<br># 选择 GitHub Actions 作为 Source<br># Hugo 官方提供现成 workflow 模板</div>
+    </div>
+  </div>
+</section>
+
+<!-- 技术栈对比 -->
+<section class="section">
+  <h2 class="section-title">技术栈对比</h2>
+  <p class="section-desc">不同方案在性能、学习曲线、自由度等方面的差异</p>
+  <table class="tech-table">
+    <thead>
+      <tr>
+        <th>方案</th>
+        <th>构建速度</th>
+        <th>学习曲线</th>
+        <th>定制自由度</th>
+        <th>托管成本</th>
+        <th>适合人群</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Hugo / Hexo</td>
+        <td>极快</td>
+        <td>低</td>
+        <td>中</td>
+        <td>免费</td>
+        <td>技术写作者</td>
+      </tr>
+      <tr>
+        <td>Next.js / Nuxt</td>
+        <td>快</td>
+        <td>中</td>
+        <td>极高</td>
+        <td>免费~低</td>
+        <td>前端开发者</td>
+      </tr>
+      <tr>
+        <td>无头 CMS</td>
+        <td>快</td>
+        <td>中高</td>
+        <td>高</td>
+        <td>中</td>
+        <td>团队协作</td>
+      </tr>
+      <tr>
+        <td>托管平台</td>
+        <td>N/A</td>
+        <td>极低</td>
+        <td>低</td>
+        <td>免费</td>
+        <td>纯写作者</td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<!-- 进阶建议 -->
+<section class="section">
+  <h2 class="section-title">进阶建议</h2>
+  <p class="section-desc">让你的博客更专业、更好用的几个方向</p>
+  <div class="methods-grid">
+    <div class="method-card">
+      <div class="method-num" style="font-size:2rem;">SEO</div>
+      <h3>搜索引擎优化</h3>
+      <p>配置 meta 标签、生成 sitemap、添加结构化数据，让你的文章更容易被搜索到。</p>
+    </div>
+    <div class="method-card">
+      <div class="method-num" style="font-size:2rem;">RSS</div>
+      <h3>RSS 订阅</h3>
+      <p>提供 RSS/Atom 订阅源，方便读者通过阅读器追踪更新。</p>
+    </div>
+    <div class="method-card">
+      <div class="method-num" style="font-size:2rem;">CDN</div>
+      <h3>全球加速</h3>
+      <p>使用 Cloudflare 等 CDN 服务，提升全球访问速度和安全性。</p>
+    </div>
+    <div class="method-card">
+      <div class="method-num" style="font-size:2rem;">分析</div>
+      <h3>访问分析</h3>
+      <p>集成 Google Analytics 或 Plausible（隐私友好），了解读者行为。</p>
+    </div>
+    <div class="method-card">
+      <div class="method-num" style="font-size:2rem;">评论</div>
+      <h3>评论系统</h3>
+      <p>接入 Giscus（基于 GitHub Discussions）或 Twikoo，与读者互动。</p>
+    </div>
+    <div class="method-card">
+      <div class="method-num" style="font-size:2rem;">CI/CD</div>
+      <h3>自动化部署</h3>
+      <p>配置 GitHub Actions，推送代码后自动构建、测试、部署。</p>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <p>用喜欢的工具，写真诚的文字。</p>
+  <p style="margin-top:0.5rem; opacity:0.6;">本页面由 frontend-design 技能生成</p>
+</footer>
+
+<script>
+  // 简单的滚动渐入效果
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.style.opacity = '1';
+        entry.target.style.transform = 'translateY(0)';
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.method-card').forEach(card => {
+    card.style.opacity = '0';
+    card.style.transform = 'translateY(20px)';
+    card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+    observer.observe(card);
+  });
+</script>
+
+</body>
+</html>

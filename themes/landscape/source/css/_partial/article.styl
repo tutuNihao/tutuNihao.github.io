@@ -35,8 +35,9 @@
   color: color-default
   line-height: line-height-title
   transition: color 0.2s
+  font-family: font-pixel
   a&:hover
-    color: color-link
+    color: color-sdv-darkgrass
 
 .article-entry
   @extend $base-style
@@ -123,17 +124,21 @@
 .article-more-link a
   display: inline-block
   line-height: 1em
-  padding: 6px 15px
-  border-radius: 15px
-  background: color-background
-  color: color-grey
-  text-shadow: 0 1px #fff
+  padding: 8px 20px
+  border-radius: 0
+  background: color-sdv-grass
+  color: #fff
+  font-family: font-pixel
   text-decoration: none
+  border: 3px solid color-sdv-darkgrass
+  box-shadow: 3px 3px 0 color-sdv-dirt
+  transition: all 0.1s
   &:hover
-    background: color-link
+    background: color-sdv-orange
     color: #fff
     text-decoration: none
-    text-shadow: 0 1px darken(color-link, 20%)
+    transform: translate(-1px, -1px)
+    box-shadow: 4px 4px 0 color-sdv-dirt
 
 .article-footer
   clearfix()

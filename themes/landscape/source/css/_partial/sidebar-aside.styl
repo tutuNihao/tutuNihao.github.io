@@ -10,17 +10,19 @@
 
 .widget
   color: color-sidebar-text
-  text-shadow: 0 1px #fff
   background: color-widget-background
-  box-shadow: 0 -1px 4px color-widget-border inset
-  border: 1px solid color-widget-border
+  border: 4px solid color-sdv-dirt
+  box-shadow:
+    3px 3px 0 color-sdv-wood,
+    inset 0 0 0 2px color-sdv-gold
   padding: 15px
-  border-radius: 3px
+  border-radius: 0
+  image-rendering: pixelated
   a
-    color: color-link
+    color: color-sdv-darkgrass
     text-decoration: none
     &:hover
-      text-decoration: underline
+      color: color-sdv-orange
   ul, ol, dl
     ul, ol, dl
       margin-left: 15px

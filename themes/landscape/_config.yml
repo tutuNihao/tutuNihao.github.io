@@ -3,8 +3,8 @@
 # ===============
 # Navigation menu
 menu:
-  Home: /
-  Archives: /archives
+  首页: /
+  归档: /archives
 # RSS link
 rss: /atom.xml
 # Path of title banner image of page top
@@ -15,26 +15,19 @@ subtitle:
 # Each name must correspond to the icon name of Fork Awesome
 # https://forkaweso.me/Fork-Awesome/icons/
 links:
-#  github: https://github.com/your_github_account
-#  twitter: https://twitter.com/your_twitter_account
-#  telegram: https://t.me/your_telegram_account
+  github: https://github.com/tutunihao
 
 # ===============
 # Content
 # ===============
 # "Read More" link at the bottom of excerpted articles. `false` to hide the link.
-excerpt_link: Read More
+excerpt_link: 继续阅读
 # Enable fancybox
 fancybox: true
 
 # ===============
 # Footer
 # ===============
-# Display copyright notice in footer. Please see https://creativecommons.org/choose/ and https://choosealicense.com/
-# You can use html like below.
-# copyright: |-
-#   <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a></br>
-#   All website licensed under <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0</a></br>
 copyright:
 
 # ===============
@@ -74,17 +67,15 @@ fb_app_id:
 # ===============
 # Comment system
 # ===============
-# Disqus comment system.
 disqus_shortname:
-# valine comment system. https://valine.js.org
 valine:
-  enable: false # if you want use valine,please set this value is true
-  appId:  # leancloud application app id
-  appKey:  # leancloud application app key
-  notify: false # valine mail notify (true/false) https://github.com/xCss/Valine/wiki
-  verify: false # valine verify code (true/false)
-  pageSize: 10 # comment list page size
-  avatar: mm # gravatar style https://valine.js.org/#/avatar
-  lang: zh-cn # i18n: zh-cn/en
-  placeholder: Just go go # valine comment input placeholder(like: Please leave your footprints )
-  guest_info: nick,mail,link #valine comment header info
+  enable: false
+  appId:
+  appKey:
+  notify: false
+  verify: false
+  pageSize: 10
+  avatar: mm
+  lang: zh-cn
+  placeholder: 说不定种下一颗种子，明天会长出什么来呢...
+  guest_info: nick,mail,link

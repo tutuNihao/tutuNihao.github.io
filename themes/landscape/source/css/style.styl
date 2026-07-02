@@ -83,3 +83,111 @@ if sidebar is left
 
 if sidebar
   @import "_partial/sidebar"
+
+// ========== Stardew Valley Extra Pixel Decorations ==========
+
+// Pixel selection style
+::selection
+  background: color-sdv-gold
+  color: color-default
+
+// Pixel scrollbar
+::-webkit-scrollbar
+  width: 12px
+::-webkit-scrollbar-track
+  background: color-sdv-cream
+  border-left: 3px solid color-sdv-dirt
+::-webkit-scrollbar-thumb
+  background: color-sdv-dirt
+  border: 2px solid color-sdv-cream
+  &:hover
+    background: color-sdv-darkgrass
+
+// Pixel-style links hover effect
+.article-entry a
+  color: color-sdv-darkgrass
+  text-decoration: none
+  border-bottom: 2px dashed color-sdv-grass
+  transition: all 0.2s
+  &:hover
+    color: color-sdv-orange
+    border-bottom-color: color-sdv-orange
+
+// Stardew-style blockquote
+.article-entry blockquote
+  font-family: font-serif
+  margin: line-height 20px
+  text-align: center
+  background: color-widget-background
+  border-left: 6px solid color-sdv-gold
+  border-right: 6px solid color-sdv-gold
+  border-radius: 0
+  padding: 15px 20px
+  box-shadow: 3px 3px 0 color-sdv-dirt
+
+// Stardew-style tables
+.article-entry table
+  th
+    border-bottom: 4px solid color-sdv-darkgrass
+    background: color-sdv-dirt
+    color: #fff
+    font-family: font-pixel
+  td
+    border-bottom: 2px dashed color-sdv-dirt
+
+// Pixel flower decorations at bottom of articles
+.article-inner::after
+  content: "🌻 🌿 🌻"
+  display: block
+  text-align: center
+  padding: 10px
+  font-size: 1.2em
+  opacity: 0.6
+
+// Tag links pixel style
+.article-tag-list-link
+  color: color-sdv-darkgrass
+  font-family: font-pixel
+  font-size: 0.9em
+  &:hover
+    color: color-sdv-orange
+
+// Stardew date capsule style
+.article-date
+  font-family: font-pixel
+  color: color-sdv-orange
+  font-size: 0.85em
+  background: color-sdv-cream
+  padding: 2px 10px
+  border: 2px solid color-sdv-dirt
+
+// Category pill
+.article-category
+  .article-category-link
+    font-family: font-pixel
+    color: color-sdv-darkgrass
+    background: color-sdv-grass
+    padding: 2px 10px
+    border: 2px solid color-sdv-darkgrass
+    &:hover
+      background: color-sdv-orange
+      color: #fff
+
+// Header nav links pixel hover
+.main-nav-link
+  font-family: font-pixel
+  letter-spacing: 2px
+  &:hover
+    background: rgba(0,0,0,0.2)
+    border-radius: 0
+
+// Stardew decorative separator for footer
+#footer-info
+  position: relative
+  padding-top: 15px
+  &::before
+    content: "🌾 🌾 🌾"
+    display: block
+    text-align: center
+    margin-bottom: 15px
+    font-size: 1.2em

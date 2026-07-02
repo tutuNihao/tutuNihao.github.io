@@ -31,22 +31,22 @@
   width: 100%
   height: 100%
   background:
-    linear-gradient(180deg, color-sdv-sky 0%, #81D4FA 30%, #A5D6A7 70%, color-sdv-grass 100%)
+    url("images/banner(1).jpg") center center
+  background-size: cover
+  image-rendering: pixelated
   z-index: -1
-  // Pixel cloud decorations via CSS
-  &:after
+  // Semi-transparent overlay for text readability
+  &:before
     content: ""
     position: absolute
-    top: 40px
-    left: 10%
-    width: 80px
-    height: 32px
-    background: rgba(255,255,255,0.7)
-    box-shadow:
-      20px -12px 0 8px rgba(255,255,255,0.7),
-      48px -4px 0 4px rgba(255,255,255,0.7),
-      80px 8px 0 -4px rgba(255,255,255,0.5)
-    image-rendering: pixelated
+    inset: 0
+    background: linear-gradient(
+      180deg,
+      rgba(92,148,252,0.2) 0%,
+      rgba(46,125,50,0.15) 50%,
+      rgba(62,39,35,0.3) 100%
+    )
+    z-index: 1
 
 #header-title
   text-align: center
@@ -143,10 +143,11 @@ $nav-link
   top: 0
   left: 0
   right: 0
-  background: #fff
+  background: color-sdv-cream
   padding: 5px 15px
-  border-radius: 15px
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3)
+  border: 3px solid color-sdv-dirt
+  box-shadow: 3px 3px 0 color-sdv-wood
+  border-radius: 0
 
 .search-form-input
   border: none

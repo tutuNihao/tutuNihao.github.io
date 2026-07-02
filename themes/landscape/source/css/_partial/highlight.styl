@@ -1,27 +1,28 @@
-// https://github.com/chriskempson/tomorrow-theme
-highlight-background = #2d2d2d
-highlight-current-line = #393939
-highlight-selection = #515151
-highlight-foreground = #cccccc
-highlight-comment = #999999
-highlight-red = #f2777a
-highlight-orange = #f99157
-highlight-yellow = #ffcc66
-highlight-green = #99cc99
-highlight-aqua = #66cccc
-highlight-blue = #6699cc
-highlight-purple = #cc99cc
+// Stardew Valley-inspired code highlight theme
+highlight-background = #3E2723
+highlight-current-line = #4E342E
+highlight-selection = #5D4037
+highlight-foreground = #E8D5B7
+highlight-comment = #A1887F
+highlight-red = #FF7043
+highlight-orange = #F9A825
+highlight-yellow = #FFD54F
+highlight-green = #6ABE30
+highlight-aqua = #4DD0E1
+highlight-blue = #81D4FA
+highlight-purple = #CE93D8
 
 $code-block
   background: highlight-background
   margin: 0 article-padding * -1
   padding: 15px article-padding
-  border-style: solid
-  border-color: color-border
-  border-width: 1px 0
+  border: 3px solid color-sdv-dirt
+  border-radius: 0
+  box-shadow: 3px 3px 0 color-sdv-wood
   overflow: auto
   color: highlight-foreground
   line-height: font-size * line-height
+  image-rendering: pixelated
 
 $line-numbers
   color: #666

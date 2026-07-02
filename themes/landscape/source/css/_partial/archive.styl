@@ -28,11 +28,12 @@
 .archive-article-title
   text-decoration: none
   font-weight: bold
+  font-family: font-pixel
   color: color-default
   transition: color 0.2s
   line-height: line-height
   &:hover
-    color: color-link
+    color: color-sdv-darkgrass
 
 .archive-article-footer
   margin-top: 1em
@@ -48,10 +49,10 @@
 #page-nav
   clearfix()
   margin: block-margin auto
-  background: #fff
-  box-shadow: 1px 2px 3px #ddd
-  border: 1px solid color-border
-  border-radius: 3px
+  background: color-sdv-cream
+  border: 4px solid color-sdv-dirt
+  box-shadow: 3px 3px 0 color-sdv-wood
+  border-radius: 0
   text-align: center
   color: color-grey
   overflow: hidden
@@ -60,10 +61,11 @@
     line-height: 1
     height: 2ex
   a
-    color: color-grey
+    color: color-sdv-darkgrass
     text-decoration: none
+    font-family: font-pixel
     &:hover
-      background: color-grey
+      background: color-sdv-grass
       color: #fff
   .prev
     float: left
@@ -74,7 +76,8 @@
     @media mq-mobile
       display: none
   .current
-    color: color-default
+    color: color-sdv-darkgrass
     font-weight: bold
+    background: color-sdv-gold
   .space
-    color: color-border
+    color: color-sdv-dirt

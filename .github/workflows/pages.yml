@@ -19,8 +19,8 @@ jobs:
         run: |
           ls -la node_modules/.bin/hexo || echo "hexo 可执行文件不存在"
           npx hexo --version || echo "npx 无法调用 hexo"
-      - name: 生成静态文件
-        run: npx hexo generate
+      - name: Build Hexo
+        run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./public

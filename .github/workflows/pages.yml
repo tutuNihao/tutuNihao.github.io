@@ -13,8 +13,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
-      - run: npm install           # 安装依赖
-      - run: npx hexo generate     # 使用 npx 调用 hexo（关键！）
+      - name: 安装依赖（使用 npm ci）
+        run: npm ci
+      - name: 调试：检查 hexo 可执行文件
+        run: |
+          ls -la node_modules/.bin/hexo || echo "hexo 可执行文件不存在"
+          npx hexo --version || echo "npx 无法调用 hexo"
+      - name: 生成静态文件
+        run: npx hexo generate
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./public

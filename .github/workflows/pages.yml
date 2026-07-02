@@ -3,35 +3,24 @@ name: 部署到 GitHub Pages
 on:
   push:
     branches:
-      - main  # 当推送到 main 分支时触发
+      - main
 
 jobs:
-  # 构建任务：生成静态网页
   build:
     runs-on: ubuntu-latest
     steps:
-      # 1. 拉取你的 Hexo 源码
       - uses: actions/checkout@v4
-      
-      # 2. 安装 Node.js 环境
       - uses: actions/setup-node@v4
         with:
-          node-version: "22"  # 你可以改成 20 或 24
-      
-      # 3. 安装依赖包（必须！否则找不到 hexo 命令）
-      - run: npm install
-      
-      # 4. 生成静态 HTML 文件（注意一定要用 npx 前缀）
-      - run: npx hexo generate
-      
-      # 5. 上传生成好的 public 文件夹，供后续部署使用
+          node-version: "22"
+      - run: npm install           # 安装依赖
+      - run: npx hexo generate     # 使用 npx 调用 hexo（关键！）
       - uses: actions/upload-pages-artifact@v3
         with:
           path: ./public
 
-  # 部署任务：将构建好的文件发布到 Pages 服务
   deploy:
-    needs: build  # 等 build 任务成功后再执行
+    needs: build
     runs-on: ubuntu-latest
     permissions:
       pages: write
@@ -40,5 +29,4 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      # 将上一步上传的 artifact 部署到线上
       - uses: actions/deploy-pages@v4

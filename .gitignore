@@ -16,6 +16,9 @@ Thumbs.db
 .vscode/
 .idea/
 
+# 一些给自己的提示
+.env
+
 # 调试日志
 debug.log*
 npm-debug.log*
